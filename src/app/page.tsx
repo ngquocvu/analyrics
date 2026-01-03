@@ -1,65 +1,162 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from 'react';
+import SearchBar from '@/components/Search/SearchBar';
+import SongCard from '@/components/Results/SongCard';
+import MeaningReveal from '@/components/Analysis/MeaningReveal';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
+  const [songs, setSongs] = useState<any[]>([]);
+  const [selectedSong, setSelectedSong] = useState<any>(null);
+  const [meaning, setMeaning] = useState<any>(null);
+  const [youtubeVideo, setYoutubeVideo] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  const handleSearch = async (query: string) => {
+    setLoading(true);
+    setSongs([]);
+    setSelectedSong(null);
+    setMeaning(null);
+    setYoutubeVideo(null);
+    try {
+      const res = await axios.get('/api/search', { params: { q: query } });
+      setSongs(res.data.songs);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectSong = async (song: any) => {
+    setSelectedSong(song);
+    setAnalyzing(true);
+    setMeaning(null);
+    setYoutubeVideo(null);
+
+    try {
+      const res = await axios.post('/api/analyze', { song });
+      setMeaning(res.data.meaning);
+      setYoutubeVideo(res.data.youtubeVideo);
+    } catch (e) {
+      setMeaning("Lỗi khi phân tích. Vui lòng kiểm tra lại API Key.");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const resetAnalysis = () => {
+    setSelectedSong(null);
+    setMeaning(null);
+    setYoutubeVideo(null);
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="min-h-screen flex flex-col items-center relative overflow-hidden bg-[#050505]">
+
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[--neon-purple] rounded-full blur-[180px] opacity-15 animate-pulse duration-[10s]"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[--neon-cyan] rounded-full blur-[180px] opacity-15 animate-pulse duration-[12s]"></div>
+      </div>
+
+      <div className="z-10 w-full max-w-6xl px-6 py-12 md:py-20 flex flex-col items-center gap-16">
+
+        {/* Animated Hero Section */}
+        <AnimatePresence>
+          {!selectedSong && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+              transition={{ duration: 0.5 }}
+              className="text-center space-y-6 flex flex-col items-center"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-xs font-medium text-[--neon-lime] tracking-widest uppercase mb-4"
+              >
+                🎵 Phân tích nhạc bằng AI
+              </motion.div>
+
+              <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white relative">
+                LYRICS
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[--neon-cyan] via-white to-[--neon-purple] animate-gradient-x">
+                  DEEP DIVE
+                </span>
+              </h1>
+
+              <p className="text-neutral-400 text-base sm:text-lg md:text-xl max-w-lg mx-auto leading-relaxed px-4">
+                Không chỉ nghe. <span className="text-white font-bold">Mà còn hiểu sâu.</span> <br />
+                Khám phá ý nghĩa, slang và câu chuyện đằng sau mỗi bài hát.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Search & Content Area */}
+        <div className="w-full transition-all duration-500">
+          {!selectedSong && (
+            <div className="mb-12">
+              <SearchBar onSearch={handleSearch} isLoading={loading} />
+            </div>
+          )}
+
+          {/* Results Grid */}
+          <AnimatePresence mode='wait'>
+            {!selectedSong && songs.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
+              >
+                {songs.map((song, i) => (
+                  <SongCard
+                    key={song.id}
+                    song={song}
+                    index={i}
+                    onSelect={handleSelectSong}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Analysis View */}
+          <AnimatePresence mode="wait">
+            {(selectedSong || analyzing) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full"
+              >
+                {/* Back button when viewing analysis */}
+                <button
+                  onClick={resetAnalysis}
+                  className="mb-8 flex items-center gap-2 text-neutral-400 hover:text-white transition-colors group"
+                >
+                  <span className="group-hover:-translate-x-1 transition-transform">←</span> Quay lại
+                </button>
+
+                <MeaningReveal
+                  isLoading={analyzing && !meaning}
+                  meaning={meaning || ""}
+                  onClose={resetAnalysis}
+                  song={selectedSong}
+                  youtubeVideo={youtubeVideo}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+      </div>
+    </main>
   );
 }

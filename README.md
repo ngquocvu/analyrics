@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lyrics Deep Dive 🎵
 
-## Getting Started
+A Gen Z-styled app to understand the hidden meaning behind song lyrics using AI.
 
-First, run the development server:
+## 🚀 Getting Started
+
+### 1. Prerequisites
+You need API keys for the app to function fully (otherwise it uses mock data).
+
+### 2. Get API Keys
+
+#### **Genius API Token** (for Song Search)
+1. Go to [Genius API Clients](https://genius.com/api-clients).
+2. Sign up or Log in.
+3. Click **"New API Client"**.
+4. **App Name**: `Lyrics Deep Dive` (or anything).
+5. **App Website URL**: `http://localhost:3000` (can be anything valid).
+6. Click **Save**.
+7. Copy the **`Client Access Token`**.
+
+#### **Google Gemini API Key** (for Meaning Analysis)
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey).
+2. Click **"Create API Key"**.
+3. Copy the key.
+
+### 3. Setup Environment
+Create a file named `.env.local` in the root directory and add your keys:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+GENIUS_ACCESS_TOKEN=your_copied_token_here
+GOOGLE_API_KEY=your_google_key_here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Run the App
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## 🛠 Tech Stack
+- **Framework**: Next.js 14
+- **Styling**: Tailwind CSS, Framer Motion
+- **AI**: Google Generative AI
+- **Data**: Genius API
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ⚠️ Notes
+- If you don't provide a Genius Token, the search will return **Mock Data** (fake songs) for testing the UI.
