@@ -24,7 +24,7 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
     
     BƯỚC 1 - TÌM VÀ ĐỌC TOÀN BỘ LỜI BÀI HÁT:
     1. Sử dụng công cụ Google Search để tìm lời bài hát CHÍNH THỨC của bài này
-    2. Tìm trên các nguồn uy tín: Zing Mp3, Nhaccuatui, hopamchuan.com, https://lyrics.lyricfind.com/ hoặc các trang lời bài hát khác.
+    2. Tìm trên các nguồn uy tín: Zing Mp3, Nhaccuatui, https://hopamchuan.com/, https://lyrics.lyricfind.com/ hoặc các trang lời bài hát khác.
     3. Sau khi tìm được link, sử dụng URL Context tool để đọc TOÀN BỘ lời bài hát từ trang web
     4. QUAN TRỌNG: Phải sao chép CHÍNH XÁC toàn bộ lời bài hát từ nguồn, không được tự bịa hoặc thay đổi
     
