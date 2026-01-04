@@ -143,7 +143,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                         </div>
                     </motion.div>
 
-                    <h1 className="text-4xl md:text-6xl font-black text-white leading-none tracking-tight drop-shadow-lg truncate" title={song.title}>
+                    <h1 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg break-words">
                         {song.title}
                     </h1>
                     <h2 className="text-2xl text-white/60 font-medium truncate" title={song.artist}>{song.artist}</h2>
