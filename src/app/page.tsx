@@ -57,11 +57,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center relative overflow-hidden bg-[#050505]">
 
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[--neon-purple] rounded-full blur-[180px] opacity-15 animate-pulse duration-[10s]"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[--neon-cyan] rounded-full blur-[180px] opacity-15 animate-pulse duration-[12s]"></div>
-      </div>
+      {/* Dynamic Background - Disabled for mobile performance */}
 
       <div className="z-10 w-full max-w-6xl px-6 py-12 md:py-20 flex flex-col items-center gap-16">
 
