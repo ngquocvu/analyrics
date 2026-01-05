@@ -26,19 +26,32 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
             className="relative w-full max-w-2xl mx-auto"
         >
             <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-[--neon-cyan] to-[--neon-purple] rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative flex items-center bg-neutral-900 rounded-full border border-neutral-800 focus-within:border-[--neon-purple] transition-colors">
-                    <Search className="w-5 h-5 ml-4 text-neutral-400 group-focus-within:text-[--neon-cyan]" />
+                {/* Animated gradient glow */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-[--neon-cyan] via-[--neon-purple] to-[--neon-cyan] rounded-full blur opacity-25 group-hover:opacity-75 group-focus-within:opacity-100 transition-all duration-500 animate-gradient-x"></div>
+
+                {/* Search bar */}
+                <div className="relative flex items-center bg-neutral-900/90 backdrop-blur-xl rounded-full border border-neutral-800 focus-within:border-[--neon-purple] transition-all shadow-2xl">
+                    <Search className="w-5 h-5 ml-5 text-neutral-400 group-focus-within:text-[--neon-cyan] transition-colors" />
                     <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Tìm kiếm bài hát..."
-                        className="w-full bg-transparent border-none focus:ring-0 text-white placeholder-neutral-500 py-4 px-4 rounded-full outline-none font-medium"
+                        className="w-full bg-transparent border-none focus:ring-0 text-white placeholder-neutral-500 py-4 px-4 rounded-full outline-none font-medium text-base"
                         disabled={isLoading}
                     />
-                    {isLoading && (
-                        <div className="mr-4 animate-spin h-5 w-5 border-2 border-[--neon-purple] border-t-transparent rounded-full"></div>
+
+                    {/* Loading spinner or keyboard hint */}
+                    {isLoading ? (
+                        <div className="mr-5 animate-spin h-5 w-5 border-2 border-[--neon-purple] border-t-transparent rounded-full"></div>
+                    ) : query.length > 0 ? (
+                        <div className="mr-5 px-2 py-1 bg-white/5 rounded text-xs text-white/40 font-mono">
+                            ↵ Enter
+                        </div>
+                    ) : (
+                        <div className="mr-5 px-2 py-1 bg-white/5 rounded text-xs text-white/30 font-mono">
+                            ⌘K
+                        </div>
                     )}
                 </div>
             </div>

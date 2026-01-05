@@ -31,22 +31,53 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
     if (isLoading) {
         return (
             <div className="w-full flex flex-col items-center justify-center py-20 min-h-[60vh] relative z-20">
-                {/* Clean black & white spinner */}
+                {/* Enhanced multi-layer spinner */}
                 <motion.div className="relative">
+                    {/* Outer ring */}
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-20 h-20 rounded-full border-4 border-white/10 border-t-[--neon-cyan]"
+                    />
+                    {/* Middle ring */}
+                    <motion.div
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-2 rounded-full border-4 border-white/10 border-t-[--neon-purple]"
+                    />
+                    {/* Inner ring */}
                     <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="w-16 h-16 rounded-full border-4 border-white/20 border-t-white"
+                        className="absolute inset-4 rounded-full border-4 border-white/10 border-t-white"
+                    />
+                    {/* Pulsing center dot */}
+                    <motion.div
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-gradient-to-r from-[--neon-cyan] to-[--neon-purple]"
                     />
                 </motion.div>
-                <motion.p
+
+                {/* Loading messages */}
+                <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="mt-6 text-lg font-medium text-white/80 text-center"
+                    className="mt-8 text-center space-y-2"
                 >
-                    Đang phân tích lời bài hát...
-                </motion.p>
+                    <p className="text-lg font-semibold text-white/90">
+                        Đang phân tích lời bài hát...
+                    </p>
+                    <motion.p
+                        animate={{ opacity: [0.4, 1, 0.4] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="text-sm text-white/50"
+                    >
+                        Đang tìm kiếm và giải mã ý nghĩa ✨
+                    </motion.p>
+                </motion.div>
+
                 {song && (
                     <div className="absolute inset-0 -z-10 overflow-hidden">
                         <Image src={song.imageUrl} alt="bg" fill className="object-cover blur-[100px] opacity-20 scale-125" />
@@ -64,26 +95,21 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center p-10 text-white z-20 relative max-w-2xl mx-auto"
             >
-                <div className="bg-black/40 backdrop-blur-xl border border-red-400/30 rounded-2xl p-8 shadow-2xl">
+                <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
                     <div className="text-6xl mb-4">😕</div>
-                    <h3 className="text-2xl font-bold mb-3">Không tìm thấy lời bài hát</h3>
-                    <p className="text-white/70 mb-6 leading-relaxed">
+                    <h3 className="text-2xl font-bold mb-3 text-white">Không tìm thấy lời bài hát</h3>
+                    <p className="text-white/60 mb-6 leading-relaxed">
                         {meaning || "Rất tiếc, chúng tôi không thể phân tích bài hát này. Có thể lời bài hát chưa có sẵn hoặc hệ thống đang bận."}
                     </p>
                     <motion.button
                         onClick={onClose}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-full hover:shadow-lg hover:shadow-pink-500/50 transition-all"
+                        className="px-8 py-3 bg-white text-black font-bold rounded-full hover:shadow-lg transition-all"
                     >
                         🔍 Tìm bài khác
                     </motion.button>
                 </div>
-                {song && (
-                    <div className="absolute inset-0 -z-10 overflow-hidden rounded-2xl">
-                        <Image src={song.imageUrl} alt="bg" fill className="object-cover blur-[100px] opacity-20 scale-125" />
-                    </div>
-                )}
             </motion.div>
         )
     }
