@@ -29,6 +29,19 @@ body {
   scroll-behavior: smooth;
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -55,23 +68,32 @@ body {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Marquee animation for vibe text */
+/* Marquee animation for vibe text - GPU accelerated */
 @keyframes marquee {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 
   100% {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 .animate-marquee {
   animation: marquee 15s linear infinite;
+  will-change: transform;
 }
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* Disable marquee on mobile for better performance */
+@media (max-width: 768px) {
+  .animate-marquee {
+    animation: none;
+    will-change: auto;
+  }
 }
 
 /* Custom Scrollbar */
@@ -98,6 +120,7 @@ body {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  will-change: transform, opacity;
 }
 
 .glass-panel-hover {
@@ -107,6 +130,17 @@ body {
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
 }
 
+/* Reduce blur on mobile for performance */
+@media (max-width: 768px) {
+  .glass-panel {
+    backdrop-filter: blur(5px);
+  }
+
+  .glass-panel-hover {
+    backdrop-filter: blur(8px);
+  }
+}
+
 .text-gradient {
   background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
   -webkit-background-clip: text;
@@ -114,7 +148,7 @@ body {
   background-clip: text;
 }
 
-/* Gradient animation for backgrounds */
+/* Gradient animation for backgrounds - GPU accelerated */
 @keyframes gradient-x {
 
   0%,
@@ -130,16 +164,26 @@ body {
 .animate-gradient-x {
   background-size: 200% 200%;
   animation: gradient-x 3s ease infinite;
+  will-change: background-position;
 }
 
-/* Shimmer effect for hover states */
+/* Disable on mobile - use static gradient */
+@media (max-width: 768px) {
+  .animate-gradient-x {
+    animation: none;
+    will-change: auto;
+    background-position: 50% 50%;
+  }
+}
+
+/* Shimmer effect for hover states - GPU accelerated */
 @keyframes shimmer {
   0% {
-    background-position: -1000px 0;
+    transform: translate3d(-100%, 0, 0);
   }
 
   100% {
-    background-position: 1000px 0;
+    transform: translate3d(100%, 0, 0);
   }
 }
 
@@ -152,50 +196,98 @@ body {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
+  left: -100%;
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg,
       transparent 0%,
       rgba(255, 255, 255, 0.1) 50%,
       transparent 100%);
-  background-size: 1000px 100%;
   animation: shimmer 3s infinite;
   pointer-events: none;
+  will-change: transform;
 }
 
-/* Slow pulse for ambient backgrounds */
+/* Disable shimmer on mobile */
+@media (max-width: 768px) {
+  .shimmer-effect::before {
+    animation: none;
+    will-change: auto;
+    display: none;
+  }
+}
+
+/* Slow pulse for ambient backgrounds - GPU accelerated */
 @keyframes pulse-slow {
 
   0%,
   100% {
     opacity: 0.6;
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
   }
 
   50% {
     opacity: 0.8;
-    transform: scale(1.05);
+    transform: scale3d(1.05, 1.05, 1);
   }
 }
 
 .animate-pulse-slow {
   animation: pulse-slow 10s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-/* Floating animation */
+/* Simplify on mobile */
+@media (max-width: 768px) {
+  .animate-pulse-slow {
+    animation: pulse-slow 15s ease-in-out infinite;
+  }
+}
+
+/* Floating animation - GPU accelerated */
 @keyframes float {
 
   0%,
   100% {
-    transform: translateY(0px);
+    transform: translate3d(0, 0, 0);
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translate3d(0, -10px, 0);
   }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Disable on mobile - too expensive */
+@media (max-width: 768px) {
+  .animate-float {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/* Premium Lyrics Scrollbar */
+.lyrics-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lyrics-scrollbar::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 10px;
+  margin: 4px 0;
+}
+
+.lyrics-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6));
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.lyrics-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.9), rgba(236, 72, 153, 0.9));
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Search } from 'lucide-react';
 
 interface SearchBarProps {
@@ -11,6 +11,7 @@ interface SearchBarProps {
 
 export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
     const [query, setQuery] = useState('');
+    const shouldReduceMotion = useReducedMotion();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,7 +22,10 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
         <motion.form
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, type: 'spring' }}
+            transition={{
+                duration: shouldReduceMotion ? 0.2 : 0.5,
+                type: shouldReduceMotion ? 'tween' : 'spring'
+            }}
             onSubmit={handleSubmit}
             className="relative w-full max-w-2xl mx-auto"
         >

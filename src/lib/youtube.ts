@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiDebugger } from './debug';
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';
 
@@ -22,30 +23,39 @@ export const searchYouTubeVideo = async (songTitle: string, artist: string): Pro
     try {
         const query = `${songTitle} ${artist} official`;
 
-        const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                part: 'snippet',
-                q: query,
-                type: 'video',
-                maxResults: 5,
-                key: YOUTUBE_API_KEY,
-                videoEmbeddable: true,
-                videoCategoryId: '10' // Music category
-            }
-        });
+        // 🔍 Debug-friendly API call wrapper
+        const response = await apiDebugger.wrapAPICall(
+            'YouTube',
+            'https://www.googleapis.com/youtube/v3/search',
+            async () => {
+                return await axios.get('https://www.googleapis.com/youtube/v3/search', {
+                    params: {
+                        part: 'snippet',
+                        q: query,
+                        type: 'video',
+                        maxResults: 5,
+                        key: YOUTUBE_API_KEY,
+                        videoEmbeddable: true,
+                        videoCategoryId: '10' // Music category
+                    }
+                });
+            },
+            { q: query, maxResults: 5 }
+        );
 
         if (!response.data.items || response.data.items.length === 0) {
+            apiDebugger.log('warn', 'YouTube', 'No videos found', { query });
             return null;
         }
 
-        // Find the best match (prefer official/lyric videos)
         const items = response.data.items;
-        const officialVideo = items.find((item: any) =>
-            item.snippet.title.toLowerCase().includes('official') ||
-            item.snippet.title.toLowerCase().includes('lyrics')
-        );
 
-        const bestMatch = officialVideo || items[0];
+        const bestMatch = items[0];
+
+        apiDebugger.log('info', 'YouTube', 'Video found', {
+            videoId: bestMatch.id.videoId,
+            title: bestMatch.snippet.title
+        });
 
         return {
             videoId: bestMatch.id.videoId,
@@ -54,7 +64,7 @@ export const searchYouTubeVideo = async (songTitle: string, artist: string): Pro
             channelTitle: bestMatch.snippet.channelTitle
         };
     } catch (error) {
-        console.error('YouTube API Error:', error);
+        apiDebugger.log('error', 'YouTube', 'API call failed', error);
         return null;
     }
 };

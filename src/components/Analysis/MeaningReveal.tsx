@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Sparkles, Quote, Zap, Code, ChevronDown, ChevronUp, Music2 } from 'lucide-react';
 import type { AnalysisResult } from '@/lib/ai';
 import Image from 'next/image';
@@ -17,13 +17,17 @@ interface MeaningRevealProps {
 
 export default function MeaningReveal({ meaning, isLoading, onClose, song, youtubeVideo }: MeaningRevealProps) {
     const videoRef = useRef<HTMLDivElement>(null);
+    const shouldReduceMotion = useReducedMotion();
+
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const scrollToVideo = () => {
+        setIsPlaying(true);
         videoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         // Add a subtle highlight effect
-        videoRef.current?.classList.add('ring-2', 'ring-pink-400', 'ring-opacity-50');
+        videoRef.current?.classList.add('ring-2', 'ring-red-400', 'ring-opacity-50');
         setTimeout(() => {
-            videoRef.current?.classList.remove('ring-2', 'ring-pink-400', 'ring-opacity-50');
+            videoRef.current?.classList.remove('ring-2', 'ring-red-400', 'ring-opacity-50');
         }, 2000);
     };
 
@@ -31,31 +35,35 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
     if (isLoading) {
         return (
             <div className="w-full flex flex-col items-center justify-center py-20 min-h-[60vh] relative z-20">
-                {/* Enhanced multi-layer spinner */}
+                {/* Optimized spinner with reduced rings on mobile */}
                 <motion.div className="relative">
                     {/* Outer ring */}
                     <motion.div
-                        animate={{ rotate: 360 }}
+                        animate={shouldReduceMotion ? {} : { rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                         className="w-20 h-20 rounded-full border-4 border-white/10 border-t-[--neon-cyan]"
+                        style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                     />
-                    {/* Middle ring */}
+                    {/* Middle ring - hidden on mobile */}
                     <motion.div
-                        animate={{ rotate: -360 }}
+                        animate={shouldReduceMotion ? {} : { rotate: -360 }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-2 rounded-full border-4 border-white/10 border-t-[--neon-purple]"
+                        className="absolute inset-2 rounded-full border-4 border-white/10 border-t-[--neon-purple] hidden md:block"
+                        style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                     />
-                    {/* Inner ring */}
+                    {/* Inner ring - hidden on mobile */}
                     <motion.div
-                        animate={{ rotate: 360 }}
+                        animate={shouldReduceMotion ? {} : { rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-4 rounded-full border-4 border-white/10 border-t-white"
+                        className="absolute inset-4 rounded-full border-4 border-white/10 border-t-white hidden md:block"
+                        style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                     />
                     {/* Pulsing center dot */}
                     <motion.div
-                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                        animate={shouldReduceMotion ? {} : { scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                         className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-gradient-to-r from-[--neon-cyan] to-[--neon-purple]"
+                        style={{ willChange: shouldReduceMotion ? 'auto' : 'transform, opacity' }}
                     />
                 </motion.div>
 
@@ -63,14 +71,14 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
+                    transition={{ delay: shouldReduceMotion ? 0 : 0.2 }}
                     className="mt-8 text-center space-y-2"
                 >
                     <p className="text-lg font-semibold text-white/90">
                         Đang phân tích lời bài hát...
                     </p>
                     <motion.p
-                        animate={{ opacity: [0.4, 1, 0.4] }}
+                        animate={shouldReduceMotion ? {} : { opacity: [0.4, 1, 0.4] }}
                         transition={{ duration: 2, repeat: Infinity }}
                         className="text-sm text-white/50"
                     >
@@ -118,10 +126,10 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
         <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, type: "spring" }}
+            transition={{ duration: shouldReduceMotion ? 0.2 : 0.6, type: shouldReduceMotion ? "tween" : "spring" }}
             className="w-full max-w-6xl mx-auto pb-20 relative z-10"
         >
-            {/* Ambient Background (Apple Music Style) */}
+            {/* Ambient Background (Apple Music Style) - Simplified for mobile */}
             <div className="fixed inset-0 -z-10 overflow-hidden">
                 {song && (
                     <>
@@ -129,18 +137,20 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                         <motion.div
                             initial={{ opacity: 0, scale: 1.2 }}
                             animate={{ opacity: 0.3, scale: 1 }}
-                            transition={{ duration: 1.5 }}
+                            transition={{ duration: shouldReduceMotion ? 0.3 : 1.5 }}
                             className="absolute inset-0"
                             style={{
                                 backgroundImage: `url(${song.imageUrl})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
+                                willChange: shouldReduceMotion ? 'auto' : 'transform, opacity',
                             }}
                         />
                         <motion.div
-                            animate={{ opacity: [0.4, 0.6, 0.4] }}
+                            animate={shouldReduceMotion ? {} : { opacity: [0.4, 0.6, 0.4] }}
                             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                             className="absolute inset-0 bg-gradient-to-b from-black/60 via-purple-900/40 to-black/80 backdrop-blur-3xl"
+                            style={{ willChange: shouldReduceMotion ? 'auto' : 'opacity' }}
                         />
                     </>
                 )}
@@ -151,9 +161,11 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="relative w-56 h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 shrink-0"
+                    className="relative w-56 h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 shrink-0 group"
                 >
-                    <Image src={song.imageUrl} alt={song.title} fill className="object-cover" />
+                    <Image src={song.imageUrl} alt={song.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                    {/* Vinyl shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 </motion.div>
 
                 <div className="space-y-4 flex-1 text-center md:text-left">
@@ -174,18 +186,19 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                     </h1>
                     <h2 className="text-2xl text-white/60 font-medium truncate" title={song.artist}>{song.artist}</h2>
 
-                    {/* Play Video Button */}
+                    {/* Play Video Button - Minimal Design */}
                     {youtubeVideo && (
                         <motion.button
                             onClick={scrollToVideo}
-                            whileHover={{ scale: 1.02, y: -2 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="mt-4 mx-auto md:mx-0 flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/50 transition-all backdrop-blur-sm border border-red-500/20"
+                            whileHover={shouldReduceMotion ? {} : { scale: 1.02, backgroundColor: "rgba(255,255,255,0.1)" }}
+                            whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                            className="mt-6 mx-auto md:mx-0 flex items-center gap-3 px-6 py-3 border border-white/30 hover:border-white text-white font-medium rounded-full transition-all duration-300 group"
+                            style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                         >
-                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                            </svg>
-                            <span>Xem Video</span>
+                            <div className="w-6 h-6 rounded-full border border-white flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
+                                <span className="text-[10px] transform translate-x-0.5">▶</span>
+                            </div>
+                            <span className="tracking-wide">Chơi nhạc</span>
                         </motion.button>
                     )}
                 </div>
@@ -195,7 +208,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: shouldReduceMotion ? 0 : 0.3 }}
                 className="px-4 md:px-0 mb-8"
             >
                 <div className="p-6 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl">
@@ -245,17 +258,29 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                 ref={videoRef}
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-lg transition-all duration-300"
+                                transition={{ delay: shouldReduceMotion ? 0 : 0.4 }}
+                                className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group"
                             >
-                                <div className="aspect-video">
+                                <div className="aspect-video relative">
                                     <iframe
-                                        src={`https://www.youtube.com/embed/${youtubeVideo.videoId}?rel=0`}
+                                        src={`https://www.youtube.com/embed/${youtubeVideo.videoId}?rel=0${isPlaying ? '&autoplay=1' : ''}`}
                                         title={youtubeVideo.title}
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowFullScreen
-                                        className="w-full h-full"
+                                        className="w-full h-full z-10 relative"
                                     />
+                                    {!isPlaying && (
+                                        <div
+                                            className="absolute inset-0 bg-black/40 z-20 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                                            onClick={() => setIsPlaying(true)}
+                                        >
+                                            <div className="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center shadow-2xl pl-1">
+                                                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M8 5v14l11-7z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="px-3 py-2 bg-black/30">
                                     <p className="text-white/50 text-xs truncate">{youtubeVideo.channelTitle}</p>
@@ -265,14 +290,36 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
 
                         {/* Full Lyrics Section */}
                         {meaning.fullLyrics && (
-                            <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-2xl p-6">
-                                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                    <Music2 className="text-purple-400" size={20} /> Lời bài hát đầy đủ
-                                </h3>
-                                <div className="max-h-96 overflow-y-auto pr-2 custom-scrollbar">
-                                    <pre className="text-white/70 text-sm leading-relaxed whitespace-pre-wrap font-sans">
-                                        {meaning.fullLyrics}
-                                    </pre>
+                            <div className="relative bg-gradient-to-br from-purple-900/20 via-black/40 to-pink-900/20 backdrop-blur-md border border-purple-500/20 rounded-3xl p-6 shadow-2xl">
+                                {/* Decorative corner accents */}
+                                <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-purple-400/40 rounded-tl-3xl" />
+                                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-pink-400/40 rounded-br-3xl" />
+
+                                <div className="relative z-10">
+                                    <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-3 pb-3 border-b border-white/10">
+                                        <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
+                                            <Music2 className="text-purple-300" size={20} />
+                                        </div>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-purple-300">
+                                            Lời bài hát đầy đủ
+                                        </span>
+                                    </h3>
+
+                                    <div className="max-h-[28rem] overflow-y-auto pr-3 lyrics-scrollbar">
+                                        {/* Opening quote decoration */}
+                                        <div className="flex items-start gap-3 mb-2">
+                                            <Quote className="text-purple-400/30 shrink-0 mt-1" size={24} />
+                                            <div className="flex-1">
+                                                <pre className="text-white/85 text-[15px] leading-[1.9] whitespace-pre-wrap font-sans tracking-wide">
+                                                    {meaning.fullLyrics}
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        {/* Closing quote decoration */}
+                                        <div className="flex justify-end mt-2">
+                                            <Quote className="text-pink-400/30 rotate-180" size={24} />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -286,7 +333,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                 key={idx}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.3 + (idx * 0.1) }}
+                                transition={{ delay: shouldReduceMotion ? 0 : 0.3 + (idx * 0.1) }}
                                 className="group bg-black/20 backdrop-blur-md border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors"
                             >
                                 <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">KEYWORD</p>
@@ -304,9 +351,10 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
             <div className="mt-20 text-center">
                 <motion.button
                     onClick={onClose}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+                    whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
                     className="px-8 sm:px-10 py-3 sm:py-4 bg-white text-black font-bold text-sm sm:text-base rounded-full transition-all shadow-xl shadow-white/20 hover:shadow-2xl hover:shadow-white/30"
+                    style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                 >
                     🎵 Phân tích bài khác
                 </motion.button>
@@ -320,35 +368,13 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
 // Sub-component for individual expandable analysis cards
 function AnalysisCard({ item, idx }: { item: any; idx: number }) {
     const [showLyrics, setShowLyrics] = useState(false);
-    const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1);
-
-    // Karaoke animation disabled for mobile performance
-    // useEffect(() => {
-    //     if (showLyrics && item.lyricsQuote) {
-    //         const words = item.lyricsQuote.split(' ');
-    //         let currentIndex = 0;
-
-    //         const interval = setInterval(() => {
-    //             setHighlightedWordIndex(currentIndex);
-    //             currentIndex++;
-
-    //             if (currentIndex >= words.length) {
-    //                 clearInterval(interval);
-    //                 setTimeout(() => setHighlightedWordIndex(-1), 500);
-    //             }
-    //         }, 250);
-
-    //         return () => clearInterval(interval);
-    //     } else {
-    //         setHighlightedWordIndex(-1);
-    //     }
-    // }, [showLyrics, item.lyricsQuote]);
+    const shouldReduceMotion = useReducedMotion();
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
+            transition={{ delay: shouldReduceMotion ? 0 : idx * 0.1 }}
             className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden"
         >
             <div className="p-6 md:p-8">
@@ -365,10 +391,10 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
                     <div className="border-t border-white/10 pt-4">
                         <button
                             onClick={() => setShowLyrics(!showLyrics)}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-purple-300 hover:text-white bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-400/20 hover:border-purple-400/40 rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-purple-500/20"
                         >
                             {showLyrics ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                            {showLyrics ? "Ẩn lời bài hát" : "Xem lời bài hát"}
+                            <span>{showLyrics ? "Ẩn lời bài hát" : "Xem lời bài hát"}</span>
                         </button>
 
                         <AnimatePresence>
@@ -377,12 +403,23 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
                                     initial={{ height: 0, opacity: 0 }}
                                     animate={{ height: "auto", opacity: 1 }}
                                     exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="mt-3 p-4 bg-black/30 rounded-xl border-l-2 border-pink-400/30 shadow-lg max-h-64 overflow-y-auto">
-                                        <pre className="text-base text-gray-300 leading-relaxed italic whitespace-pre-wrap font-sans">
-                                            "{item.lyricsQuote}"
-                                        </pre>
+                                    <div className="mt-4 p-5 bg-gradient-to-br from-purple-900/10 via-black/20 to-pink-900/10 rounded-2xl border border-purple-400/20 shadow-xl backdrop-blur-sm max-h-80 overflow-y-auto lyrics-scrollbar">
+                                        {/* Quote decoration and content */}
+                                        <div className="flex items-start gap-3">
+                                            <Quote className="text-purple-400/40 shrink-0 mt-1" size={20} />
+                                            <div className="flex-1">
+                                                <pre className="text-white/80 text-[15px] leading-[1.85] italic whitespace-pre-wrap font-sans tracking-wide mb-2">
+                                                    {item.lyricsQuote}
+                                                </pre>
+                                            </div>
+                                        </div>
+                                        {/* Closing quote - moved to bottom right */}
+                                        <div className="flex justify-end w-full mt-1">
+                                            <Quote className="text-pink-400/40 shrink-0 rotate-180" size={20} />
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}

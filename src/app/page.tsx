@@ -55,9 +55,13 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center relative overflow-hidden bg-[#050505]">
+    <main className="min-h-screen flex flex-col items-center relative overflow-hidden bg-black text-white">
 
-      {/* Dynamic Background - Disabled for mobile performance */}
+      {/* Static Minimal Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_rgba(255,255,255,0.08),_transparent_70%)]" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,_rgba(255,255,255,0.03),_transparent_70%)] blur-3xl" />
+      </div>
 
       <div className="z-10 w-full max-w-6xl px-6 py-12 md:py-20 flex flex-col items-center gap-16">
 
@@ -65,31 +69,33 @@ export default function Home() {
         <AnimatePresence>
           {!selectedSong && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-              transition={{ duration: 0.5 }}
-              className="text-center space-y-6 flex flex-col items-center"
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="text-center space-y-8 flex flex-col items-center"
             >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-xs font-medium text-[--neon-lime] tracking-widest uppercase mb-4"
+                className="inline-block px-5 py-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-semibold text-white/80 tracking-[0.2em] uppercase mb-4"
               >
-                🎵 Phân tích nhạc bằng AI
+                Phân Tích Lời Nhạc Bằng AI
               </motion.div>
 
-              <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white relative">
-                LYRICS
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[--neon-cyan] via-white to-[--neon-purple] animate-gradient-x">
-                  DEEP DIVE
+              <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter relative mb-4">
+                <span className="block drop-shadow-2xl animate-text-spotlight">
+                  ANALYRICS
                 </span>
               </h1>
 
-              <p className="text-neutral-400 text-base sm:text-lg md:text-xl max-w-lg mx-auto leading-relaxed px-4">
-                Không chỉ nghe. <span className="text-white font-bold">Mà còn hiểu sâu.</span> <br />
-                Khám phá ý nghĩa, slang và câu chuyện đằng sau mỗi bài hát.
+              <p className="text-neutral-400 text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed px-4 font-light">
+                <span className="text-white font-medium">Không chỉ nghe, mà còn hiểu sâu.</span>
+                <br />
+                <span className="text-neutral-500 mt-2 block">
+                  Khám phá ý nghĩa, slang và câu chuyện ẩn giấu đằng sau mỗi bài hát.
+                </span>
               </p>
             </motion.div>
           )}
@@ -133,12 +139,17 @@ export default function Home() {
                 className="w-full"
               >
                 {/* Back button when viewing analysis */}
-                <button
+                <motion.button
                   onClick={resetAnalysis}
-                  className="mb-8 flex items-center gap-2 text-neutral-400 hover:text-white transition-colors group"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  whileHover={{ scale: 1.02, x: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="mb-8 relative z-10 flex items-center gap-3 px-5 py-3 text-white/80 hover:text-white bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-xl transition-all group shadow-lg"
                 >
-                  <span className="group-hover:-translate-x-1 transition-transform">←</span> Quay lại
-                </button>
+                  <span className="text-lg group-hover:-translate-x-1 transition-transform">←</span>
+                  <span className="font-semibold">Quay lại</span>
+                </motion.button>
 
                 <MeaningReveal
                   isLoading={analyzing && !meaning}

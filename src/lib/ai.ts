@@ -24,7 +24,7 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
     
     BƯỚC 1 - TÌM VÀ ĐỌC TOÀN BỘ LỜI BÀI HÁT:
     1. Sử dụng công cụ Google Search để tìm lời bài hát CHÍNH THỨC của bài này
-    2. Tìm trên các nguồn uy tín: Zing Mp3, Nhaccuatui, https://hopamchuan.com/, https://lyrics.lyricfind.com/ hoặc các trang lời bài hát khác.
+    2. Tìm trên các nguồn uy tín: Zing Mp3, Nhaccuatui, Musixmatch hoặc các trang lời bài hát khác.
     3. Sau khi tìm được link, sử dụng URL Context tool để đọc TOÀN BỘ lời bài hát từ trang web
     4. QUAN TRỌNG: Phải sao chép CHÍNH XÁC toàn bộ lời bài hát từ nguồn, không được tự bịa hoặc thay đổi
     
@@ -38,11 +38,29 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
     - KHÔNG ĐƯỢC tự bịa hoặc đoán lời bài hát
     - Nếu không tìm được lời bài hát, trả về null cho fullLyrics
     
-    YÊU CẦU VỀ FORMAT TRẢ VỀ:
-    - PHẢI trả về JSON thuần túy, KHÔNG được bọc trong markdown code blocks
-    - KHÔNG thêm bất kỳ text nào trước hoặc sau JSON
-    - Đảm bảo JSON hợp lệ và có thể parse được ngay
+    ⚠️ YÊU CẦU VỀ FORMAT TRẢ VỀ - CỰC KỲ QUAN TRỌNG:
+    - Response của bạn PHẢI bắt đầu bằng ký tự '{' và kết thúc bằng ký tự '}'
+    - KHÔNG ĐƯỢC có bất kỳ text nào trước dấu '{' đầu tiên
+    - KHÔNG ĐƯỢC có bất kỳ text nào sau dấu '}' cuối cùng
+    - TUYỆT ĐỐI KHÔNG được bọc JSON trong markdown code blocks như \`\`\`json hoặc \`\`\`
+    - KHÔNG được thêm giải thích, comment, hoặc text mô tả
+    - Response PHẢI là RAW JSON thuần túy, có thể parse trực tiếp bằng JSON.parse()
+    - Đảm bảo JSON hợp lệ: tất cả string phải dùng dấu ngoặc kép, không có trailing comma
     - Tất cả các trường đều phải ngắn gọn, súc tích, đi thẳng vào vấn đề
+    
+    ✅ ĐÚNG: Response trông như thế này (bắt đầu ngay bằng dấu ngoặc nhọn):
+    {
+      "fullLyrics": "...",
+      "vibe": "..."
+    }
+    
+    ❌ SAI: Không được có text như thế này:
+    Here is the analysis:
+    \`\`\`json
+    {
+      "fullLyrics": "..."
+    }
+    \`\`\`
     
     Cấu trúc JSON:
     {
@@ -77,6 +95,8 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
     - coreMessage: 1 câu duy nhất
 
     Giọng văn: Khách quan, sâu sắc, hiện đại, ngôn ngữ Gen Z Việt Nam, NGẮN GỌN.
+    
+    🎯 NHỚ: Response của bạn phải BẮT ĐẦU bằng dấu '{' và KẾT THÚC bằng dấu '}' - KHÔNG có text nào khác!
     `;
 
     try {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiDebugger } from './debug';
 
 const GENIUS_ACCESS_TOKEN = process.env.GENIUS_ACCESS_TOKEN || '';
 
@@ -12,7 +13,7 @@ interface GeniusSong {
 
 export const searchSongs = async (query: string): Promise<GeniusSong[]> => {
     if (!GENIUS_ACCESS_TOKEN) {
-        console.warn("GENIUS_ACCESS_TOKEN not found, using mock data");
+        apiDebugger.log('warn', 'Genius', 'API token not found, using mock data');
         return [
             {
                 id: 1,
@@ -25,22 +26,33 @@ export const searchSongs = async (query: string): Promise<GeniusSong[]> => {
     }
 
     try {
-        const response = await axios.get('https://api.genius.com/search', {
-            headers: {
-                'Authorization': `Bearer ${GENIUS_ACCESS_TOKEN}`
+        // 🔍 Debug-friendly API call wrapper
+        const response = await apiDebugger.wrapAPICall(
+            'Genius',
+            'https://api.genius.com/search',
+            async () => {
+                return await axios.get('https://api.genius.com/search', {
+                    headers: {
+                        'Authorization': `Bearer ${GENIUS_ACCESS_TOKEN}`
+                    },
+                    params: { q: query }
+                });
             },
-            params: { q: query }
-        });
+            { q: query }
+        );
 
-        return response.data.response.hits.map((hit: any) => ({
+        const songs = response.data.response.hits.map((hit: any) => ({
             id: hit.result.id,
             title: hit.result.title,
             artist: hit.result.primary_artist.name,
             imageUrl: hit.result.song_art_image_url,
             url: hit.result.url
         }));
+
+        apiDebugger.log('info', 'Genius', `Found ${songs.length} songs`);
+        return songs;
     } catch (error) {
-        console.error("Genius API Error:", error);
+        apiDebugger.log('error', 'Genius', 'Search failed', error);
         return [];
     }
 };

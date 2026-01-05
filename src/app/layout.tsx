@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lyrics Deep Dive | AI Meaning Decoder",
-  description: "Understand the hidden meaning behind your favorite songs with AI.",
+  title: "Analyrics | Phân Tích Lời Bài Hát Bằng AI",
+  description: "Khám phá ý nghĩa sâu sắc và câu chuyện ẩn giấu đằng sau mỗi bài hát yêu thích của bạn.",
 };
 
 export default function RootLayout({
