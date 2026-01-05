@@ -80,7 +80,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
 
                 {song && (
                     <div className="absolute inset-0 -z-10 overflow-hidden">
-                        <Image src={song.imageUrl} alt="bg" fill className="object-cover blur-[100px] opacity-20 scale-125" />
+                        {/* Blur disabled for mobile performance */}
                     </div>
                 )}
             </div>
@@ -125,8 +125,23 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
             <div className="fixed inset-0 -z-10 overflow-hidden">
                 {song && (
                     <>
-                        <Image src={song.imageUrl} alt="bg" fill className="object-cover blur-[100px] opacity-60 scale-150 animate-pulse-slow" />
-                        <div className="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
+                        {/* Dreamy blur effect with album art */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 1.2 }}
+                            animate={{ opacity: 0.3, scale: 1 }}
+                            transition={{ duration: 1.5 }}
+                            className="absolute inset-0"
+                            style={{
+                                backgroundImage: `url(${song.imageUrl})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                            }}
+                        />
+                        <motion.div
+                            animate={{ opacity: [0.4, 0.6, 0.4] }}
+                            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute inset-0 bg-gradient-to-b from-black/60 via-purple-900/40 to-black/80 backdrop-blur-3xl"
+                        />
                     </>
                 )}
             </div>
@@ -154,7 +169,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                         </div>
                     </motion.div>
 
-                    <h1 className="text-4xl md:text-6xl font-black text-white leading-none tracking-tight drop-shadow-lg truncate" title={song.title}>
+                    <h1 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg break-words">
                         {song.title}
                     </h1>
                     <h2 className="text-2xl text-white/60 font-medium truncate" title={song.artist}>{song.artist}</h2>
@@ -283,32 +298,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 </div>
             </div>
 
-            {/* Buy Me a Coffee Section */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="mt-16 px-4 md:px-0"
-            >
-                <div className="bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-yellow-500/10 backdrop-blur-md rounded-2xl border border-yellow-500/20 p-8 text-center shadow-xl">
-                    <div className="text-4xl mb-4">☕</div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Thích ứng dụng này?</h3>
-                    <p className="text-white/70 mb-6 max-w-md mx-auto">
-                        Nếu bạn thấy ứng dụng hữu ích, hãy ủng hộ mình một ly cà phê để tiếp tục phát triển nhé! 🎵
-                    </p>
-                    <a
-                        href="https://www.buymeacoffee.com/quocvu"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105"
-                    >
-                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z" />
-                        </svg>
-                        Mua cho mình 1 ly cà phê
-                    </a>
-                </div>
-            </motion.div>
+
 
             {/* Footer Action */}
             <div className="mt-20 text-center">
@@ -332,27 +322,27 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
     const [showLyrics, setShowLyrics] = useState(false);
     const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1);
 
-    // Karaoke animation when lyrics are shown
-    useEffect(() => {
-        if (showLyrics && item.lyricsQuote) {
-            const words = item.lyricsQuote.split(' ');
-            let currentIndex = 0;
+    // Karaoke animation disabled for mobile performance
+    // useEffect(() => {
+    //     if (showLyrics && item.lyricsQuote) {
+    //         const words = item.lyricsQuote.split(' ');
+    //         let currentIndex = 0;
 
-            const interval = setInterval(() => {
-                setHighlightedWordIndex(currentIndex);
-                currentIndex++;
+    //         const interval = setInterval(() => {
+    //             setHighlightedWordIndex(currentIndex);
+    //             currentIndex++;
 
-                if (currentIndex >= words.length) {
-                    clearInterval(interval);
-                    setTimeout(() => setHighlightedWordIndex(-1), 500);
-                }
-            }, 250);
+    //             if (currentIndex >= words.length) {
+    //                 clearInterval(interval);
+    //                 setTimeout(() => setHighlightedWordIndex(-1), 500);
+    //             }
+    //         }, 250);
 
-            return () => clearInterval(interval);
-        } else {
-            setHighlightedWordIndex(-1);
-        }
-    }, [showLyrics, item.lyricsQuote]);
+    //         return () => clearInterval(interval);
+    //     } else {
+    //         setHighlightedWordIndex(-1);
+    //     }
+    // }, [showLyrics, item.lyricsQuote]);
 
     return (
         <motion.div
@@ -391,19 +381,7 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
                                 >
                                     <div className="mt-3 p-4 bg-black/30 rounded-xl border-l-2 border-pink-400/30 shadow-lg max-h-64 overflow-y-auto">
                                         <pre className="text-base text-gray-300 leading-relaxed italic whitespace-pre-wrap font-sans">
-                                            "{item.lyricsQuote.split(' ').map((word: string, i: number, arr: string[]) => (
-                                                <span
-                                                    key={i}
-                                                    className={`transition-all duration-300 ${i === highlightedWordIndex
-                                                        ? 'text-pink-300 scale-105 font-bold'
-                                                        : i < highlightedWordIndex
-                                                            ? 'text-white'
-                                                            : 'text-gray-400'
-                                                        }`}
-                                                >
-                                                    {word}{i < arr.length - 1 ? ' ' : ''}
-                                                </span>
-                                            ))}"
+                                            "{item.lyricsQuote}"
                                         </pre>
                                     </div>
                                 </motion.div>

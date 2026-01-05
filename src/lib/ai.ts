@@ -24,7 +24,7 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
     
     BƯỚC 1 - TÌM VÀ ĐỌC TOÀN BỘ LỜI BÀI HÁT:
     1. Sử dụng công cụ Google Search để tìm lời bài hát CHÍNH THỨC của bài này
-    2. Tìm trên các nguồn uy tín: Genius.com, AZLyrics, hoặc các trang lời bài hát khác
+    2. Tìm trên các nguồn uy tín: Zing Mp3, Nhaccuatui, https://hopamchuan.com/, https://lyrics.lyricfind.com/ hoặc các trang lời bài hát khác.
     3. Sau khi tìm được link, sử dụng URL Context tool để đọc TOÀN BỘ lời bài hát từ trang web
     4. QUAN TRỌNG: Phải sao chép CHÍNH XÁC toàn bộ lời bài hát từ nguồn, không được tự bịa hoặc thay đổi
     
@@ -81,20 +81,60 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
 
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.5-flash-lite",
             contents: [prompt],
             config: {
                 tools: [{ urlContext: {} }, { googleSearch: {} }],
             },
         });
 
-        if (!response || !response.text) {
-            console.error("Empty response from Gemini API");
-            console.log("Full response:", JSON.stringify(response, null, 2));
+        let textResponse: string | undefined;
+
+        console.log('=== GEMINI API DEBUG START ===');
+        console.log('1. Full Response Object:', response);
+        console.log('2. Response type:', typeof response);
+        console.log('3. Response keys:', Object.keys(response || {}));
+
+        // Check if response.text exists and what type it is
+        console.log('4. response.text exists?', 'text' in (response || {}));
+        console.log('5. response.text type:', typeof response?.text);
+        console.log('6. response.text value:', response?.text);
+
+        // Check candidates structure
+        console.log('7. response.candidates exists?', !!response?.candidates);
+        console.log('8. response.candidates length:', response?.candidates?.length);
+        if (response?.candidates?.[0]) {
+            console.log('9. First candidate:', response.candidates[0]);
+            console.log('10. First candidate keys:', Object.keys(response.candidates[0]));
+            console.log('11. First candidate content:', response.candidates[0].content);
+        }
+
+        // Try accessing via the text getter first
+        if (response && 'text' in response && response.text) {
+            textResponse = response.text;
+            console.log('✅ Successfully extracted text from response.text getter');
+            console.log('Text length:', textResponse.length);
+            console.log('Text preview (first 200 chars):', textResponse.substring(0, 200));
+        }
+        // Fallback: try accessing via candidates array
+        else if (response?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            textResponse = response.candidates[0].content.parts[0].text;
+            console.log('✅ Successfully extracted text via candidates array');
+            console.log('Text length:', textResponse.length);
+            console.log('Text preview (first 200 chars):', textResponse.substring(0, 200));
+        } else {
+            console.error('❌ Failed to extract text from response');
+            console.log('=== GEMINI API DEBUG END ===');
             return null;
         }
 
-        const textResponse = response.text;
+        if (!textResponse || textResponse.trim() === '') {
+            console.error('❌ Empty text response from Gemini API');
+            console.log('=== GEMINI API DEBUG END ===');
+            return null;
+        }
+
+        console.log('=== GEMINI API DEBUG END ===');
 
         // Log URL context metadata if available
         if (response.candidates?.[0]?.urlContextMetadata) {
@@ -107,10 +147,29 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
         }
 
         // Clean up potential markdown code blocks if AI adds them
-        const cleanJson = textResponse.replace(/^```json\s*/, '').replace(/\s*```$/, '').trim();
+        // Also handle cases where Gemini returns multiple JSON blocks or arrays
+        let cleanJson = textResponse
+            .replace(/^```json\s*/g, "")
+            .replace(/\s*```$/g, "")
+            .trim();
+
+        // Sometimes Gemini returns the JSON followed by another markdown block
+        // Extract only the first JSON object/array (use greedy match to get the full JSON)
+        const jsonMatch = cleanJson.match(/^(\[\s\S]*\]|\{\s\S]*\})/);
+        if (jsonMatch) {
+            cleanJson = jsonMatch[1];
+        }
 
         try {
-            return JSON.parse(cleanJson);
+            const parsed = JSON.parse(cleanJson);
+
+            // If Gemini returns an array with one object, extract that object
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                console.log('📦 Gemini returned an array, extracting first element');
+                return parsed[0];
+            }
+
+            return parsed;
         } catch (parseError) {
             console.error("JSON Parse Error. Raw Text:", textResponse);
             console.error("Cleaned Text:", cleanJson);
