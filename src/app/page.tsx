@@ -164,6 +164,22 @@ export default function Home() {
         </div>
 
       </div>
-    </main>
+
+
+      {/* Footer */}
+      <footer className="w-full py-8 text-center text-neutral-500 text-sm relative z-10">
+        <p className="mb-2">Built with using Gemini 2.5 Flash</p>
+        <div className="flex justify-center gap-4">
+          <a
+            href="https://www.facebook.com/iamquocvu/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-colors underline underline-offset-4"
+          >
+            Connect with Owner (Vu Nguyen)
+          </a>
+        </div>
+      </footer>
+    </main >
   );
 }

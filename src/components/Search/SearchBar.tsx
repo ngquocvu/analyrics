@@ -31,11 +31,11 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
         >
             <div className="relative group">
                 {/* Animated gradient glow */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-[--neon-cyan] via-[--neon-purple] to-[--neon-cyan] rounded-full blur opacity-25 group-hover:opacity-75 group-focus-within:opacity-100 transition-all duration-500 animate-gradient-x"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-white/10 via-white/30 to-white/10 rounded-full blur opacity-25 group-hover:opacity-75 group-focus-within:opacity-100 transition-all duration-500 animate-gradient-x"></div>
 
                 {/* Search bar */}
-                <div className="relative flex items-center bg-neutral-900/90 backdrop-blur-xl rounded-full border border-neutral-800 focus-within:border-[--neon-purple] transition-all shadow-2xl">
-                    <Search className="w-5 h-5 ml-5 text-neutral-400 group-focus-within:text-[--neon-cyan] transition-colors" />
+                <div className="relative flex items-center bg-neutral-900/90 backdrop-blur-xl rounded-full border border-neutral-800 focus-within:border-white/50 transition-all shadow-2xl">
+                    <Search className="w-5 h-5 ml-5 text-neutral-400 group-focus-within:text-white transition-colors" />
                     <input
                         type="text"
                         value={query}
@@ -47,7 +47,7 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
 
                     {/* Loading spinner or keyboard hint */}
                     {isLoading ? (
-                        <div className="mr-5 animate-spin h-5 w-5 border-2 border-[--neon-purple] border-t-transparent rounded-full"></div>
+                        <div className="mr-5 animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
                     ) : query.length > 0 ? (
                         <div className="mr-5 px-2 py-1 bg-white/5 rounded text-xs text-white/40 font-mono">
                             ↵ Enter

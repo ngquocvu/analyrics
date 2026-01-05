@@ -41,28 +41,28 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                     <motion.div
                         animate={shouldReduceMotion ? {} : { rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                        className="w-20 h-20 rounded-full border-4 border-white/10 border-t-[--neon-cyan]"
+                        className="w-20 h-20 rounded-full border-4 border-white/10 border-t-white"
                         style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                     />
                     {/* Middle ring - hidden on mobile */}
                     <motion.div
                         animate={shouldReduceMotion ? {} : { rotate: -360 }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-2 rounded-full border-4 border-white/10 border-t-[--neon-purple] hidden md:block"
+                        className="absolute inset-2 rounded-full border-4 border-white/10 border-t-white/60 hidden md:block"
                         style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                     />
                     {/* Inner ring - hidden on mobile */}
                     <motion.div
                         animate={shouldReduceMotion ? {} : { rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-4 rounded-full border-4 border-white/10 border-t-white hidden md:block"
+                        className="absolute inset-4 rounded-full border-4 border-white/10 border-t-white/30 hidden md:block"
                         style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                     />
                     {/* Pulsing center dot */}
                     <motion.div
                         animate={shouldReduceMotion ? {} : { scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
-                        className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-gradient-to-r from-[--neon-cyan] to-[--neon-purple]"
+                        className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-white"
                         style={{ willChange: shouldReduceMotion ? 'auto' : 'transform, opacity' }}
                     />
                 </motion.div>
@@ -195,10 +195,8 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                             className="mt-6 mx-auto md:mx-0 flex items-center gap-3 px-6 py-3 border border-white/30 hover:border-white text-white font-medium rounded-full transition-all duration-300 group"
                             style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                         >
-                            <div className="w-6 h-6 rounded-full border border-white flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
-                                <span className="text-[10px] transform translate-x-0.5">▶</span>
-                            </div>
-                            <span className="tracking-wide">Chơi nhạc</span>
+
+                            <span className="tracking-wide">Phát nhạc</span>
                         </motion.button>
                     )}
                 </div>
@@ -290,10 +288,10 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
 
                         {/* Full Lyrics Section */}
                         {meaning.fullLyrics && (
-                            <div className="relative bg-gradient-to-br from-purple-900/20 via-black/40 to-pink-900/20 backdrop-blur-md border border-purple-500/20 rounded-3xl p-6 shadow-2xl">
+                            <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-2xl">
                                 {/* Decorative corner accents */}
-                                <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-purple-400/40 rounded-tl-3xl" />
-                                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-pink-400/40 rounded-br-3xl" />
+                                <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-3xl" />
+                                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-3xl" />
 
                                 <div className="relative z-10">
                                     <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-3 pb-3 border-b border-white/10">
@@ -301,23 +299,23 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                             <Music2 className="text-purple-300" size={20} />
                                         </div>
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-purple-300">
-                                            Lời bài hát đầy đủ
+                                            Lời bài hát
                                         </span>
                                     </h3>
 
                                     <div className="max-h-[28rem] overflow-y-auto pr-3 lyrics-scrollbar">
                                         {/* Opening quote decoration */}
                                         <div className="flex items-start gap-3 mb-2">
-                                            <Quote className="text-purple-400/30 shrink-0 mt-1" size={24} />
+                                            <Quote className="text-white/30 shrink-0 mt-1" size={24} />
                                             <div className="flex-1">
-                                                <pre className="text-white/85 text-[15px] leading-[1.9] whitespace-pre-wrap font-sans tracking-wide">
+                                                <pre className="text-white/85 text-[15px] leading-[1.9] whitespace-pre-wrap font-serif tracking-wide">
                                                     {meaning.fullLyrics}
                                                 </pre>
                                             </div>
                                         </div>
                                         {/* Closing quote decoration */}
                                         <div className="flex justify-end mt-2">
-                                            <Quote className="text-pink-400/30 rotate-180" size={24} />
+                                            <Quote className="text-white/30 rotate-180" size={24} />
                                         </div>
                                     </div>
                                 </div>
@@ -391,7 +389,7 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
                     <div className="border-t border-white/10 pt-4">
                         <button
                             onClick={() => setShowLyrics(!showLyrics)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-purple-300 hover:text-white bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-400/20 hover:border-purple-400/40 rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-purple-500/20"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white hover:text-white bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/40 rounded-xl transition-all duration-300 shadow-sm hover:shadow-lg"
                         >
                             {showLyrics ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                             <span>{showLyrics ? "Ẩn lời bài hát" : "Xem lời bài hát"}</span>
@@ -406,19 +404,19 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
                                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="mt-4 p-5 bg-gradient-to-br from-purple-900/10 via-black/20 to-pink-900/10 rounded-2xl border border-purple-400/20 shadow-xl backdrop-blur-sm max-h-80 overflow-y-auto lyrics-scrollbar">
+                                    <div className="mt-4 p-5 bg-white/5 rounded-2xl border border-white/10 shadow-xl backdrop-blur-sm max-h-80 overflow-y-auto lyrics-scrollbar">
                                         {/* Quote decoration and content */}
                                         <div className="flex items-start gap-3">
-                                            <Quote className="text-purple-400/40 shrink-0 mt-1" size={20} />
+                                            <Quote className="text-white/40 shrink-0 mt-1" size={20} />
                                             <div className="flex-1">
-                                                <pre className="text-white/80 text-[15px] leading-[1.85] italic whitespace-pre-wrap font-sans tracking-wide mb-2">
+                                                <pre className="text-white/80 text-[15px] leading-[1.85] italic whitespace-pre-wrap font-serif tracking-wide mb-2">
                                                     {item.lyricsQuote}
                                                 </pre>
                                             </div>
                                         </div>
                                         {/* Closing quote - moved to bottom right */}
                                         <div className="flex justify-end w-full mt-1">
-                                            <Quote className="text-pink-400/40 shrink-0 rotate-180" size={20} />
+                                            <Quote className="text-white/40 shrink-0 rotate-180" size={20} />
                                         </div>
                                     </div>
                                 </motion.div>

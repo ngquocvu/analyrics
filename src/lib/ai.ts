@@ -70,8 +70,8 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
       "analysis": [
         { 
           "section": "Tên đoạn - PHẢI dùng format chuẩn: Intro, Verse 1, Verse 2, Pre-Chorus, Chorus, Post-Chorus, Bridge, Outro, hoặc Hook", 
-          "lyricsQuote": "Nếu đoạn ngắn (dưới 7 câu): trích dẫn TOÀN BỘ lời của đoạn. Nếu đoạn dài: trích 3-4 câu QUAN TRỌNG NHẤT làm đại diện",
-          "content": "Phân tích ý nghĩa đoạn này (NGẮN GỌN, 2-3 câu, đi thẳng vào ý chính)." 
+          "lyricsQuote": "Nếu đoạn ngắn (dưới 10 câu): trích dẫn TOÀN BỘ lời của đoạn. Nếu đoạn dài: trích 7 câu QUAN TRỌNG NHẤT làm đại diện",
+          "content": "Phân tích ý nghĩa đoạn này (NGẮN GỌN, 4-5 câu, đi thẳng vào ý chính)." 
         }
       ],
       "metaphors": [
@@ -101,7 +101,7 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
 
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-2.5-flash",
             contents: [prompt],
             config: {
                 tools: [{ urlContext: {} }, { googleSearch: {} }],

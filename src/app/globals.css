@@ -111,7 +111,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--neon-purple);
+  background: #555;
 }
 
 /* Animations classes utils */
@@ -142,7 +142,7 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
+  background: linear-gradient(to right, #ffffff, #a0a0a0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -276,18 +276,17 @@ body {
 }
 
 .lyrics-scrollbar::-webkit-scrollbar-track {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   margin: 4px 0;
 }
 
 .lyrics-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6));
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .lyrics-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(168, 85, 247, 0.9), rgba(236, 72, 153, 0.9));
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  background: rgba(255, 255, 255, 0.4);
 }

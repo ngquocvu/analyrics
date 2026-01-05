@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   description: "Khám phá ý nghĩa sâu sắc và câu chuyện ẩn giấu đằng sau mỗi bài hát yêu thích của bạn.",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

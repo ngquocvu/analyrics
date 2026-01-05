@@ -72,7 +72,7 @@ export default function AudioPlayer({ previewUrl, spotifyUrl, songTitle, artist 
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-3 px-6 py-3 bg-[#1DB954] text-white font-bold rounded-full hover:bg-[#1ed760] transition-colors shadow-lg"
+                className="flex items-center justify-center gap-3 px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-colors shadow-lg"
             >
                 <ExternalLink size={20} />
                 Nghe trên Spotify
@@ -129,10 +129,10 @@ export default function AudioPlayer({ previewUrl, spotifyUrl, songTitle, artist 
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#1DB954] text-white text-sm font-bold rounded-full hover:bg-[#1ed760] transition-colors shadow-lg flex-shrink-0"
+                    className="flex items-center gap-2 px-4 py-2 bg-white text-black text-sm font-bold rounded-full hover:bg-white/90 transition-colors shadow-lg flex-shrink-0"
                 >
                     <ExternalLink size={16} />
-                    <span className="hidden sm:inline">Full</span>
+                    <span className="hidden sm:inline">Spotify</span>
                 </motion.a>
             </div>
         </div>
