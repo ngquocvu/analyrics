@@ -167,23 +167,25 @@ export default function Home() {
       </div>
 
 
-      {/* Footer */}
-      <footer className="w-full py-8 text-center text-neutral-500 text-sm relative z-10">
-        <div className="flex flex-col items-center gap-4 mb-4">
-          <BuyMeACoffee />
-        </div>
-        <p className="mb-2">Built with using Gemini 2.5 Flash</p>
-        <div className="flex justify-center gap-4">
-          <a
-            href="https://www.facebook.com/iamquocvu/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors underline underline-offset-4"
-          >
-            Connect with Owner (Vu Nguyen)
-          </a>
-        </div>
-      </footer>
+      {/* Footer - Only show on reveal page */}
+      {selectedSong && (
+        <footer className="w-full py-8 text-center text-neutral-500 text-sm relative z-10">
+          <div className="flex flex-col items-center gap-4 mb-4">
+            <BuyMeACoffee />
+          </div>
+          <p className="mb-2">Built with using Gemini 2.5 Flash</p>
+          <div className="flex justify-center gap-4">
+            <a
+              href="https://www.facebook.com/iamquocvu/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors underline underline-offset-4"
+            >
+              Connect with Owner (Vu Nguyen)
+            </a>
+          </div>
+        </footer>
+      )}
     </main >
   );
 }
