@@ -103,7 +103,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center p-10 text-white z-20 relative max-w-2xl mx-auto"
             >
-                <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+                <div className="bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
                     <div className="text-6xl mb-4">😕</div>
                     <h3 className="text-2xl font-bold mb-3 text-white">Không tìm thấy lời bài hát</h3>
                     <p className="text-white/60 mb-6 leading-relaxed">
@@ -258,7 +258,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 transition={{ delay: shouldReduceMotion ? 0 : 0.3 }}
                 className="px-6 md:px-0 mb-10 mt-[100vh] md:mt-0"
             >
-                <div className="p-8 md:p-6 glass-strong rounded-2xl shadow-2xl">
+                <div className="p-8 md:p-6 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl">
                     <div className="flex items-start gap-3">
                         <Quote className="text-purple-400/60 shrink-0 mt-1" size={24} />
                         <div>
@@ -278,7 +278,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 <div className="lg:col-span-8 space-y-6">
 
                     {/* Overview Box */}
-                    <div className="glass-strong rounded-2xl p-6 md:p-8 shadow-xl">
+                    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl">
                         <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
                             <Sparkles className="text-yellow-400" size={20} /> Tổng Quan
                         </h3>
@@ -306,7 +306,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: shouldReduceMotion ? 0 : 0.4 }}
-                                className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group"
+                                className="bg-black/30 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group"
                             >
                                 <div className="aspect-video relative">
                                     <iframe
@@ -337,7 +337,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
 
                         {/* Full Lyrics Section */}
                         {meaning.fullLyrics && (
-                            <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-2xl">
+                            <div className="relative bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-2xl">
                                 {/* Decorative corner accents */}
                                 <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-3xl" />
                                 <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-3xl" />
@@ -381,7 +381,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: shouldReduceMotion ? 0 : 0.3 + (idx * 0.1) }}
-                                className="group bg-black/20 backdrop-blur-md border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors"
+                                className="group bg-black/40 backdrop-blur-md border border-white/10 p-5 rounded-2xl hover:bg-black/30 transition-colors"
                             >
                                 <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">KEYWORD</p>
                                 <p className="text-xl font-bold text-white mb-1">"{meta.phrase}"</p>
@@ -453,7 +453,7 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
                                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="mt-4 p-5 bg-white/5 rounded-2xl border border-white/10 shadow-xl backdrop-blur-sm max-h-80 overflow-y-auto lyrics-scrollbar">
+                                    <div className="mt-4 p-5 bg-black/30 rounded-2xl border border-white/10 shadow-xl backdrop-blur-sm max-h-80 overflow-y-auto lyrics-scrollbar">
                                         {/* Quote decoration and content */}
                                         <div className="flex items-start gap-3">
                                             <Quote className="text-white/40 shrink-0 mt-1" size={20} />

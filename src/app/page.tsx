@@ -4,6 +4,7 @@ import { useState } from 'react';
 import SearchBar from '@/components/Search/SearchBar';
 import SongCard from '@/components/Results/SongCard';
 import MeaningReveal from '@/components/Analysis/MeaningReveal';
+import BuyMeACoffee from '@/components/UI/BuyMeACoffee';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -168,6 +169,9 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="w-full py-8 text-center text-neutral-500 text-sm relative z-10">
+        <div className="flex flex-col items-center gap-4 mb-4">
+          <BuyMeACoffee />
+        </div>
         <p className="mb-2">Built with using Gemini 2.5 Flash</p>
         <div className="flex justify-center gap-4">
           <a
