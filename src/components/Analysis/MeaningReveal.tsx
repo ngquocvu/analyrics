@@ -156,22 +156,69 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 )}
             </div>
 
-            {/* Header: Album Art & Vibe */}
-            <div className="flex flex-col md:flex-row items-center md:items-end gap-8 mb-12 pt-10 px-4 md:px-0">
+            {/* Header: Album Art & Vibe - Fullscreen on Mobile */}
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-0 md:gap-8 mb-8 md:mb-12 md:pt-10">
+                {/* Mobile: Fullscreen fixed cover, Desktop: Standard card */}
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="relative w-56 h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 shrink-0 group"
+                    className="fixed md:relative top-0 left-0 right-0 md:top-auto md:left-auto md:right-auto w-screen md:w-64 h-screen md:h-64 md:rounded-2xl overflow-hidden shadow-2xl shadow-black/50 md:shrink-0 group z-0 md:z-auto"
                 >
-                    <Image src={song.imageUrl} alt={song.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <Image
+                        src={song.imageUrl}
+                        alt={song.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        priority
+                    />
                     {/* Vinyl shine effect */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                    {/* Mobile: Enhanced gradient overlay for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/90 md:hidden"></div>
+
+                    {/* Mobile: Song info overlay at bottom with enhanced styling */}
+                    <div className="absolute bottom-0 left-0 right-0 p-8 md:hidden space-y-6 z-10">
+                        <motion.div
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            className="flex flex-wrap gap-3 overflow-hidden justify-start"
+                        >
+                            <div className="px-5 py-2 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-xl border border-white/40 text-white font-bold text-xs uppercase tracking-widest shadow-2xl">
+                                <span className="drop-shadow-lg">VIBE: {meaning.vibe}</span>
+                            </div>
+                        </motion.div>
+
+                        <div className="space-y-3">
+                            <h1 className="text-6xl font-black text-white leading-tight tracking-tight drop-shadow-2xl">
+                                {song.title}
+                            </h1>
+                            <h2 className="text-3xl text-white/90 font-medium drop-shadow-xl" title={song.artist}>{song.artist}</h2>
+                        </div>
+
+                        {/* Play Video Button - Mobile Enhanced */}
+                        {youtubeVideo && (
+                            <motion.button
+                                onClick={scrollToVideo}
+                                whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
+                                whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                                className="flex items-center gap-3 px-7 py-4 border-2 border-white/50 hover:border-white bg-white/15 hover:bg-white/25 backdrop-blur-xl text-white font-bold rounded-full transition-all duration-300 shadow-2xl"
+                                style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
+                            >
+                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                                <span className="tracking-wide text-lg">Phát nhạc</span>
+                            </motion.button>
+                        )}
+                    </div>
                 </motion.div>
 
-                <div className="space-y-4 flex-1 text-center md:text-left">
+                {/* Desktop: Song info beside album */}
+                <div className="hidden md:block space-y-4 flex-1 text-left">
                     <motion.div
                         initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
-                        className="flex flex-wrap gap-3 overflow-hidden justify-center md:justify-start"
+                        className="flex flex-wrap gap-3 overflow-hidden"
                     >
                         <div className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-sm uppercase tracking-widest shadow-lg overflow-hidden max-w-xs sm:max-w-md">
                             <div className="flex whitespace-nowrap animate-marquee">
@@ -186,16 +233,18 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                     </h1>
                     <h2 className="text-2xl text-white/60 font-medium truncate" title={song.artist}>{song.artist}</h2>
 
-                    {/* Play Video Button - Minimal Design */}
+                    {/* Play Video Button - Desktop */}
                     {youtubeVideo && (
                         <motion.button
                             onClick={scrollToVideo}
                             whileHover={shouldReduceMotion ? {} : { scale: 1.02, backgroundColor: "rgba(255,255,255,0.1)" }}
                             whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
-                            className="mt-6 mx-auto md:mx-0 flex items-center gap-3 px-6 py-3 border border-white/30 hover:border-white text-white font-medium rounded-full transition-all duration-300 group"
+                            className="mt-6 flex items-center gap-3 px-6 py-3 border border-white/30 hover:border-white text-white font-medium rounded-full transition-all duration-300 group"
                             style={{ willChange: shouldReduceMotion ? 'auto' : 'transform' }}
                         >
-
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
                             <span className="tracking-wide">Phát nhạc</span>
                         </motion.button>
                     )}
@@ -207,14 +256,14 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: shouldReduceMotion ? 0 : 0.3 }}
-                className="px-4 md:px-0 mb-8"
+                className="px-6 md:px-0 mb-10 mt-[100vh] md:mt-0"
             >
-                <div className="p-6 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl">
+                <div className="p-8 md:p-6 glass-strong rounded-2xl shadow-2xl">
                     <div className="flex items-start gap-3">
-                        <Quote className="text-white/40 shrink-0 mt-1" size={20} />
+                        <Quote className="text-purple-400/60 shrink-0 mt-1" size={24} />
                         <div>
-                            <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">Thông điệp cốt lõi</h3>
-                            <p className="text-lg md:text-xl text-white/90 font-light leading-relaxed">
+                            <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-3">Thông điệp cốt lõi</h3>
+                            <p className="text-xl md:text-xl text-white/95 font-light leading-relaxed">
                                 "{meaning.coreMessage}"
                             </p>
                         </div>
@@ -223,13 +272,13 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
             </motion.div>
 
             {/* Main Content Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 md:px-0">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-6 md:px-0">
 
                 {/* Left Column: Analysis (8 cols) */}
                 <div className="lg:col-span-8 space-y-6">
 
                     {/* Overview Box */}
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8">
+                    <div className="glass-strong rounded-2xl p-6 md:p-8 shadow-xl">
                         <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
                             <Sparkles className="text-yellow-400" size={20} /> Tổng Quan
                         </h3>
@@ -373,7 +422,7 @@ function AnalysisCard({ item, idx }: { item: any; idx: number }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: shouldReduceMotion ? 0 : idx * 0.1 }}
-            className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden"
+            className="glass-strong rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
         >
             <div className="p-6 md:p-8">
                 <div className="flex justify-between items-start mb-4">
