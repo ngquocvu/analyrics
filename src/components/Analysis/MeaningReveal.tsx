@@ -104,10 +104,10 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 className="text-center p-10 text-white z-20 relative max-w-2xl mx-auto"
             >
                 <div className="bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-                    <div className="text-6xl mb-4">😕</div>
-                    <h3 className="text-2xl font-bold mb-3 text-white">Không tìm thấy lời bài hát</h3>
+                    <div className="text-6xl mb-4">⏳</div>
+                    <h3 className="text-2xl font-bold mb-3 text-white">Lượng truy cập cao</h3>
                     <p className="text-white/60 mb-6 leading-relaxed">
-                        {meaning || "Rất tiếc, chúng tôi không thể phân tích bài hát này. Có thể lời bài hát chưa có sẵn hoặc hệ thống đang bận."}
+                        {meaning || "Rất tiếc, hệ thống đang có lượng truy cập cao. Vui lòng thử lại sau."}
                     </p>
                     <motion.button
                         onClick={onClose}
