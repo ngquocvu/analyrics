@@ -13,13 +13,24 @@ interface MeaningRevealProps {
     onClose: () => void;
     song: any;
     youtubeVideo?: any;
+    fromCache?: boolean;
+    onRegenerate?: () => void;
 }
 
-export default function MeaningReveal({ meaning, isLoading, onClose, song, youtubeVideo }: MeaningRevealProps) {
+export default function MeaningReveal({ meaning, isLoading, onClose, song, youtubeVideo, fromCache = false, onRegenerate }: MeaningRevealProps) {
     const videoRef = useRef<HTMLDivElement>(null);
     const shouldReduceMotion = useReducedMotion();
 
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isRegenerating, setIsRegenerating] = useState(false);
+
+    const handleRegenerate = async () => {
+        if (onRegenerate) {
+            setIsRegenerating(true);
+            await onRegenerate();
+            setIsRegenerating(false);
+        }
+    };
 
     const scrollToVideo = () => {
         setIsPlaying(true);
@@ -235,13 +246,54 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                 <div className="p-8 md:p-6 bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl">
                     <div className="flex items-start gap-3">
                         <Quote className="text-purple-400/60 shrink-0 mt-1" size={24} />
-                        <div>
+                        <div className="flex-1">
                             <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-3">Thông điệp cốt lõi</h3>
                             <p className="text-xl md:text-xl text-white/95 font-light leading-relaxed">
                                 "{meaning.coreMessage}"
                             </p>
                         </div>
                     </div>
+
+                    {/* Regenerate Button - Only show for cached data */}
+                    {fromCache && onRegenerate && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="mt-5 pt-5 border-t border-white/5"
+                        >
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs text-white/30 flex items-center gap-1.5">
+                                    <span className="text-[10px]">💾</span>
+                                    <span>Kết quả đã lưu từ lần phân tích trước</span>
+                                </p>
+                                <motion.button
+                                    onClick={handleRegenerate}
+                                    disabled={isRegenerating}
+                                    whileHover={shouldReduceMotion ? {} : { x: 2 }}
+                                    className="text-xs text-white/40 hover:text-white/70 transition-colors flex items-center gap-1.5 disabled:opacity-30 disabled:cursor-not-allowed group"
+                                >
+                                    {isRegenerating ? (
+                                        <>
+                                            <motion.div
+                                                animate={{ rotate: 360 }}
+                                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                                className="w-3 h-3 border border-white/30 border-t-white/60 rounded-full"
+                                            />
+                                            <span>Đang tạo mới...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg className="w-3 h-3 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            <span className="underline decoration-dotted underline-offset-2">Tạo phân tích mới</span>
+                                        </>
+                                    )}
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    )}
                 </div>
             </motion.div>
 

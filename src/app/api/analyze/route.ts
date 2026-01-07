@@ -5,7 +5,7 @@ import { getAnalyzedSong, saveAnalyzedSong } from '@/lib/db';
 
 export async function POST(request: Request) {
     const body = await request.json();
-    const { song } = body;
+    const { song, forceRegenerate = false } = body;
 
     if (!song) {
         return NextResponse.json({ error: 'Song data required' }, { status: 400 });
@@ -29,21 +29,30 @@ export async function POST(request: Request) {
     }
     */
 
-    // Step 1: Check if analysis exists in database
     let meaning = null;
-    try {
-        meaning = await getAnalyzedSong(song.title, song.artist);
-    } catch (error) {
-        console.error('Database lookup failed, will proceed with AI generation:', error);
+    let fromCache = false;
+
+    // Step 1: Check if analysis exists in database (skip if force regenerate)
+    if (!forceRegenerate) {
+        try {
+            meaning = await getAnalyzedSong(song.title, song.artist);
+            if (meaning) {
+                fromCache = true;
+            }
+        } catch (error) {
+            console.error('Database lookup failed, will proceed with AI generation:', error);
+        }
+    } else {
+        console.log(`🔄 Force regenerating analysis for: ${song.title} by ${song.artist}`);
     }
 
-    // Step 2: If not in database, generate new analysis with AI
+    // Step 2: If not in database or force regenerate, generate new analysis with AI
     if (!meaning) {
         // Generate Meaning - AI will search for and read lyrics from the web
         // Pass song title and artist so AI can search for accurate lyrics
         meaning = await generateMeaning(song.title, song.artist);
 
-        // Step 3: Save the new analysis to database
+        // Step 3: Save the new analysis to database (this will override if exists)
         if (meaning) {
             try {
                 await saveAnalyzedSong(song, meaning);
@@ -54,5 +63,5 @@ export async function POST(request: Request) {
         }
     }
 
-    return NextResponse.json({ meaning, youtubeVideo });
+    return NextResponse.json({ meaning, youtubeVideo, fromCache });
 }

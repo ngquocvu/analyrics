@@ -15,6 +15,7 @@ export default function Home() {
   const [youtubeVideo, setYoutubeVideo] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [fromCache, setFromCache] = useState(false);
 
   const handleSearch = async (query: string) => {
     setLoading(true);
@@ -22,6 +23,7 @@ export default function Home() {
     setSelectedSong(null);
     setMeaning(null);
     setYoutubeVideo(null);
+    setFromCache(false);
     try {
       const res = await axios.get('/api/search', { params: { q: query } });
       setSongs(res.data.songs);
@@ -32,20 +34,29 @@ export default function Home() {
     }
   };
 
-  const handleSelectSong = async (song: any) => {
+  const handleSelectSong = async (song: any, forceRegenerate = false) => {
     setSelectedSong(song);
     setAnalyzing(true);
     setMeaning(null);
     setYoutubeVideo(null);
+    setFromCache(false);
 
     try {
-      const res = await axios.post('/api/analyze', { song });
+      const res = await axios.post('/api/analyze', { song, forceRegenerate });
       setMeaning(res.data.meaning);
       setYoutubeVideo(res.data.youtubeVideo);
+      setFromCache(res.data.fromCache || false);
     } catch (e) {
       setMeaning("Lỗi khi phân tích. Vui lòng kiểm tra lại API Key.");
+      setFromCache(false);
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleRegenerateAnalysis = async () => {
+    if (selectedSong) {
+      await handleSelectSong(selectedSong, true);
     }
   };
 
@@ -53,6 +64,7 @@ export default function Home() {
     setSelectedSong(null);
     setMeaning(null);
     setYoutubeVideo(null);
+    setFromCache(false);
   }
 
   return (
@@ -158,6 +170,8 @@ export default function Home() {
                   onClose={resetAnalysis}
                   song={selectedSong}
                   youtubeVideo={youtubeVideo}
+                  fromCache={fromCache}
+                  onRegenerate={handleRegenerateAnalysis}
                 />
               </motion.div>
             )}

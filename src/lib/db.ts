@@ -36,6 +36,7 @@ export function generateCacheKey(title: string, artist: string): string {
 
 /**
  * Save analyzed song to Firestore
+ * If a document with the same cache key exists, it will be updated instead of creating a new one
  * @param song - Song metadata
  * @param analysis - AI-generated analysis results
  * @returns The saved document ID
@@ -49,17 +50,41 @@ export async function saveAnalyzedSong(
         const cacheKey = generateCacheKey(song.title, song.artist);
         const now = Timestamp.now();
 
-        const docData: Omit<AnalyzedSong, 'id'> = {
-            cacheKey,
-            song,
-            analysis,
-            createdAt: now,
-            updatedAt: now,
-        };
+        // Check if document already exists
+        const existingSnapshot = await db
+            .collection('analyzedSongs')
+            .where('cacheKey', '==', cacheKey)
+            .limit(1)
+            .get();
 
-        const docRef = await db.collection('analyzedSongs').add(docData);
-        console.log(`✅ Saved analysis to database for: ${song.title} by ${song.artist}`);
-        return docRef.id;
+        if (!existingSnapshot.empty) {
+            // Update existing document
+            const existingDoc = existingSnapshot.docs[0];
+            const existingData = existingDoc.data() as Omit<AnalyzedSong, 'id'>;
+
+            await existingDoc.ref.update({
+                song,
+                analysis,
+                updatedAt: now,
+                // Keep original createdAt
+            });
+
+            console.log(`🔄 Updated existing analysis in database for: ${song.title} by ${song.artist}`);
+            return existingDoc.id;
+        } else {
+            // Create new document
+            const docData: Omit<AnalyzedSong, 'id'> = {
+                cacheKey,
+                song,
+                analysis,
+                createdAt: now,
+                updatedAt: now,
+            };
+
+            const docRef = await db.collection('analyzedSongs').add(docData);
+            console.log(`✅ Saved new analysis to database for: ${song.title} by ${song.artist}`);
+            return docRef.id;
+        }
     } catch (error) {
         console.error('❌ Error saving analyzed song to database:', error);
         throw error;
