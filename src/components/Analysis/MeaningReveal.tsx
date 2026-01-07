@@ -206,7 +206,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                     <h2 className="text-xl sm:text-2xl text-white/60 font-medium" title={song.artist}>{song.artist}</h2>
 
                     {/* Play Video Button */}
-                    {youtubeVideo && (
+                    {youtubeVideo && !youtubeVideo.error && (
                         <motion.button
                             onClick={scrollToVideo}
                             whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
@@ -280,30 +280,44 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                 transition={{ delay: shouldReduceMotion ? 0 : 0.4 }}
                                 className="bg-black/30 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group"
                             >
-                                <div className="aspect-video relative">
-                                    <iframe
-                                        src={`https://www.youtube.com/embed/${youtubeVideo.videoId}?rel=0${isPlaying ? '&autoplay=1' : ''}`}
-                                        title={youtubeVideo.title}
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        className="w-full h-full z-10 relative"
-                                    />
-                                    {!isPlaying && (
-                                        <div
-                                            className="absolute inset-0 bg-black/40 z-20 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                                            onClick={() => setIsPlaying(true)}
-                                        >
-                                            <div className="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center shadow-2xl pl-1">
-                                                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M8 5v14l11-7z" />
-                                                </svg>
-                                            </div>
+                                {youtubeVideo.error ? (
+                                    // Error state - System overload message
+                                    <div className="aspect-video relative flex items-center justify-center bg-black/50">
+                                        <div className="text-center px-6">
+                                            <div className="text-4xl mb-3">⏳</div>
+                                            <h4 className="text-white font-bold text-lg mb-2">Hệ thống đang quá tải</h4>
+                                            <p className="text-white/60 text-sm">Không thể tải video lúc này</p>
                                         </div>
-                                    )}
-                                </div>
-                                <div className="px-3 py-2 bg-black/30">
-                                    <p className="text-white/50 text-xs truncate">{youtubeVideo.channelTitle}</p>
-                                </div>
+                                    </div>
+                                ) : (
+                                    // Normal video player
+                                    <>
+                                        <div className="aspect-video relative">
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${youtubeVideo.videoId}?rel=0${isPlaying ? '&autoplay=1' : ''}`}
+                                                title={youtubeVideo.title}
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                className="w-full h-full z-10 relative"
+                                            />
+                                            {!isPlaying && (
+                                                <div
+                                                    className="absolute inset-0 bg-black/40 z-20 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    onClick={() => setIsPlaying(true)}
+                                                >
+                                                    <div className="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center shadow-2xl pl-1">
+                                                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M8 5v14l11-7z" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="px-3 py-2 bg-black/30">
+                                            <p className="text-white/50 text-xs truncate">{youtubeVideo.channelTitle}</p>
+                                        </div>
+                                    </>
+                                )}
                             </motion.div>
                         )}
 
