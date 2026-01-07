@@ -206,6 +206,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                     <h2 className="text-xl sm:text-2xl text-white/60 font-medium" title={song.artist}>{song.artist}</h2>
 
                     {/* Play Video Button */}
+                    {/* TEMPORARILY HIDDEN
                     {youtubeVideo && !youtubeVideo.error && (
                         <motion.button
                             onClick={scrollToVideo}
@@ -220,6 +221,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                             <span className="tracking-wide">Phát nhạc</span>
                         </motion.button>
                     )}
+                    */}
                 </div>
             </div>
 
@@ -272,6 +274,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                     <div className="sticky top-10 space-y-6">
 
                         {/* YouTube Video Player - Compact */}
+                        {/* TEMPORARILY HIDDEN
                         {youtubeVideo && (
                             <motion.div
                                 ref={videoRef}
@@ -320,6 +323,7 @@ export default function MeaningReveal({ meaning, isLoading, onClose, song, youtu
                                 )}
                             </motion.div>
                         )}
+                        */}
 
                         {/* Full Lyrics Section */}
                         {meaning.fullLyrics && (

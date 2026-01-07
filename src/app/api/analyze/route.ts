@@ -10,8 +10,10 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Song data required' }, { status: 400 });
     }
 
+    // TEMPORARILY HIDDEN - YouTube API call disabled
     // Search for YouTube video - don't let this fail the entire analysis
     let youtubeVideo = null;
+    /* 
     try {
         youtubeVideo = await searchYouTubeVideo(song.title, song.artist);
     } catch (error) {
@@ -24,6 +26,7 @@ export async function POST(request: Request) {
     if (!youtubeVideo) {
         youtubeVideo = { error: true };
     }
+    */
 
     // Generate Meaning - AI will search for and read lyrics from the web
     // Pass song title and artist so AI can search for accurate lyrics
