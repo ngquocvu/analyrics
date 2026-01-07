@@ -166,22 +166,79 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
             console.log("Search Grounding Used:", JSON.stringify(response.candidates[0].groundingMetadata, null, 2));
         }
 
-        // Clean up potential markdown code blocks if AI adds them
-        // Also handle cases where Gemini returns multiple JSON blocks or arrays
-        let cleanJson = textResponse
+        // Enhanced JSON extraction with multiple fallback strategies
+        // Strategy 1: Remove markdown code blocks first
+        let cleanedResponse = textResponse
             .replace(/^```json\s*/g, "")
             .replace(/\s*```$/g, "")
             .trim();
 
-        // Sometimes Gemini returns the JSON followed by another markdown block
-        // Extract only the first JSON object/array (use greedy match to get the full JSON)
-        const jsonMatch = cleanJson.match(/^(\[\s\S]*\]|\{\s\S]*\})/);
-        if (jsonMatch) {
-            cleanJson = jsonMatch[1];
+        let extractedJson: string | null = null;
+
+        // Strategy 2: Find first '{' and matching '}' using bracket counting
+        // This handles cases where AI adds explanatory text before the JSON
+        const firstBrace = cleanedResponse.indexOf('{');
+        if (firstBrace !== -1) {
+            let braceCount = 0;
+            let inString = false;
+            let escapeNext = false;
+
+            for (let i = firstBrace; i < cleanedResponse.length; i++) {
+                const char = cleanedResponse[i];
+
+                // Handle escape sequences
+                if (escapeNext) {
+                    escapeNext = false;
+                    continue;
+                }
+
+                if (char === '\\') {
+                    escapeNext = true;
+                    continue;
+                }
+
+                // Track if we're inside a string
+                if (char === '"') {
+                    inString = !inString;
+                    continue;
+                }
+
+                // Only count braces outside of strings
+                if (!inString) {
+                    if (char === '{') {
+                        braceCount++;
+                    } else if (char === '}') {
+                        braceCount--;
+
+                        // Found matching closing brace
+                        if (braceCount === 0) {
+                            extractedJson = cleanedResponse.substring(firstBrace, i + 1);
+                            console.log('✅ Strategy 2: Extracted JSON using bracket counting');
+                            console.log('Skipped leading text:', cleanedResponse.substring(0, firstBrace).substring(0, 100));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Strategy 3: Fallback to regex pattern (for array responses)
+        if (!extractedJson) {
+            const jsonMatch = cleanedResponse.match(/^(\[\s\S]*\]|\{\s\S]*\})/);
+            if (jsonMatch) {
+                extractedJson = jsonMatch[1];
+                console.log('✅ Strategy 3: Extracted JSON using regex pattern');
+            }
+        }
+
+        // Strategy 4: Try parsing the cleaned response as-is
+        if (!extractedJson) {
+            extractedJson = cleanedResponse;
+            console.log('⚠️ Strategy 4: Attempting to parse cleaned response directly');
         }
 
         try {
-            const parsed = JSON.parse(cleanJson);
+            const parsed = JSON.parse(extractedJson);
 
             // If Gemini returns an array with one object, extract that object
             if (Array.isArray(parsed) && parsed.length > 0) {
@@ -189,10 +246,13 @@ export const generateMeaning = async (songTitle: string, artist: string): Promis
                 return parsed[0];
             }
 
+            console.log('✅ Successfully parsed JSON response');
             return parsed;
         } catch (parseError) {
-            console.error("JSON Parse Error. Raw Text:", textResponse);
-            console.error("Cleaned Text:", cleanJson);
+            console.error("❌ JSON Parse Error after all strategies failed");
+            console.error("Raw Response (first 500 chars):", textResponse.substring(0, 500));
+            console.error("Extracted JSON attempt:", extractedJson?.substring(0, 500));
+            console.error("Parse Error:", parseError);
             return null;
         }
 
